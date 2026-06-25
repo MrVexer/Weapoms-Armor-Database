@@ -253,11 +253,11 @@ td:nth-child(2) {
   <table>
     <thead>
       <tr>
-        <th>Item</th>
-        <th>Category</th>
-        <th>Section</th>
-        <th>FormID</th>
-        <th>Copy</th>
+        <th onclick="sortTable('name')" style="cursor:pointer;">Item ▲▼</th>
+<th onclick="sortTable('main')" style="cursor:pointer;">Category ▲▼</th>
+<th onclick="sortTable('section')" style="cursor:pointer;">Section ▲▼</th>
+<th onclick="sortTable('formid')" style="cursor:pointer;">FormID ▲▼</th>
+<th>Copy</th>
       </tr>
     </thead>
     <tbody id="itemsTable"></tbody>
@@ -356,7 +356,39 @@ function render() {
     `;
   }).join("");
 }
+let sortColumn = "";
+let ascending = true;
 
+function sortTable(column) {
+
+    if (sortColumn === column) {
+        ascending = !ascending;
+    } else {
+        sortColumn = column;
+        ascending = true;
+    }
+
+    ITEMS.sort((a, b) => {
+
+        let valA = a[column];
+        let valB = b[column];
+
+        if (column === "formid") {
+            valA = parseInt(valA.replace(/[^0-9A-F]/gi, ""), 16);
+            valB = parseInt(valB.replace(/[^0-9A-F]/gi, ""), 16);
+        } else {
+            valA = valA.toLowerCase();
+            valB = valB.toLowerCase();
+        }
+
+        if (valA < valB) return ascending ? -1 : 1;
+        if (valA > valB) return ascending ? 1 : -1;
+        return 0;
+
+    });
+
+    render();
+}
 fillFilters();
 render();
 
